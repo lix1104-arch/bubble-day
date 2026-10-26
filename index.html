@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Bubble Day · 艺人私信模拟器</title>
+  <meta name="description" content="Bubble Day —— 你就是艺人。发布日常,收获模拟粉丝的私信回应。所有数据均为本地模拟。">
+  <meta name="theme-color" content="#a89fc0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Bubble Day">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ========== 首次进入引导 ========== -->
+    <section id="screen-onboard" class="screen" hidden>
+      <div class="onboard-wrap">
+        <div class="onboard-logo">
+          <div class="logo-bubble"><span>🫧</span><i class="dot d1"></i><i class="dot d2"></i><i class="dot d3"></i></div>
+          <h1>Bubble Day</h1>
+          <p class="onboard-sub">你就是艺人本人。<br>随手发日常、发照片、发碎碎念——<br>订阅你的粉丝们会给你回应。</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">艺人资料 <em>可随时修改</em></div>
+          <label class="field">
+            <span>昵称</span>
+            <input id="ob-name" type="text" maxlength="16" placeholder="小泡" autocomplete="off">
+          </label>
+          <div class="field">
+            <span>头像</span>
+            <div id="ob-avatars" class="avatar-grid"></div>
+          </div>
+          <label class="field">
+            <span>一句话简介 <em>选填</em></span>
+            <input id="ob-bio" type="text" maxlength="40" placeholder="例如:今天是和泡菜拉面相依为命的一天">
+          </label>
+          <label class="field field-inline">
+            <span>粉丝怎么称呼你 <em>选填</em></span>
+            <select id="ob-gender">
+              <option value="">不确定 / 随意</option>
+              <option value="f">姐姐 / 欧尼</option>
+              <option value="m">哥哥 / 欧巴</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="card">
+          <div class="card-title">初始订阅人数 <em>决定从什么规模开始</em></div>
+          <div id="ob-subs" class="chip-row">
+            <button class="chip" data-subs="0">0 · 从零开始</button>
+            <button class="chip" data-subs="10">10</button>
+            <button class="chip sel" data-subs="50">50</button>
+            <button class="chip" data-subs="100">100</button>
+            <button class="chip" data-subs="500">500</button>
+            <button class="chip" data-subs="1000">1000</button>
+          </div>
+          <div class="ob-custom">
+            <input id="ob-subs-custom" type="number" inputmode="numeric" min="0" max="2000000" placeholder="或自定义人数">
+          </div>
+          <p class="hint">人数越多,回复越密集、新粉越多;从零开始则能体验第一批粉丝到来的感觉。</p>
+        </div>
+
+        <button id="ob-start" class="btn-primary">开始我的第一天</button>
+        <p class="onboard-foot">所有粉丝、订阅数与热度均为本地模拟数据,不连接任何真实社交平台。</p>
+      </div>
+    </section>
+
+    <!-- ========== 主应用 ========== -->
+    <div id="main" hidden>
+      <header id="topbar">
+        <div class="tb-left">
+          <div id="tb-avatar" class="tb-avatar">🫧</div>
+          <div class="tb-names">
+            <b id="tb-name">小泡</b>
+            <span id="tb-sub">订阅 <i id="tb-subs">0</i> · <i id="tb-online">0</i> 在线</span>
+          </div>
+        </div>
+        <div class="tb-right">
+          <div class="tb-day">DAY <b id="tb-day">1</b></div>
+          <button id="tb-history" class="icon-btn" title="动态历史">🗓</button>
+        </div>
+      </header>
+
+      <main id="views">
+        <section class="view" data-view="chat">
+          <div id="chat-scroll">
+            <div id="chat-list"></div>
+            <div id="chat-typing" class="typing hidden"><span class="dots"><i></i><i></i><i></i></span><em id="typing-names"></em></div>
+            <div id="chat-endpad"></div>
+          </div>
+        </section>
+        <section class="view" data-view="stats" hidden></section>
+        <section class="view" data-view="fans" hidden></section>
+        <section class="view" data-view="me" hidden></section>
+      </main>
+
+      <div id="composer">
+        <div id="quote-bar" class="quote-bar" hidden>
+          <div class="qb-main"><b class="qb-name">回复</b><span class="qb-text"></span></div>
+          <button id="qb-cancel" title="取消引用">✕</button>
+        </div>
+        <div id="emoji-strip">
+          <button class="emo" data-e="😭">😭</button><button class="emo" data-e="🥹">🥹</button><button class="emo" data-e="😂">😂</button><button class="emo" data-e="😳">😳</button><button class="emo" data-e="🥺">🥺</button><button class="emo" data-e="❤️">❤️</button><button class="emo" data-e="🫶">🫶</button><button class="emo" data-e="✨">✨</button><button class="emo" data-e="🐶">🐶</button><button class="emo" data-e="🍜">🍜</button><button class="emo" data-e="😴">😴</button><button class="emo" data-e="🎵">🎵</button><button class="emo" data-e="(๑•̀ㅂ•́)و✧">(๑•̀ㅂ•́)و✧</button><button class="emo" data-e="ˊˋ꒳ˋ">ˊˋ꒳ˋ</button><button class="emo" data-e="ㅇㅅㅇ">ㅇㅅㅇ</button><button class="emo" data-e="QAQ">QAQ</button><button class="emo" data-e="ᕕ( ᐛ )ᕗ">ᕕ( ᐛ )ᕗ</button>
+        </div>
+        <div class="composer-row">
+          <button id="btn-photo" class="icon-btn" title="发照片">📷</button>
+          <div class="input-wrap"><textarea id="input" rows="1" placeholder="发点什么给你的粉丝…" maxlength="300"></textarea></div>
+          <button id="btn-send" class="send-btn" disabled>发送</button>
+        </div>
+      </div>
+
+      <nav id="tabbar">
+        <button class="tab sel" data-tab="chat"><span class="tab-ico">💬</span>气泡<b id="badge-chat" class="badge" hidden>0</b></button>
+        <button class="tab" data-tab="stats"><span class="tab-ico">📊</span>数据</button>
+        <button class="tab" data-tab="fans"><span class="tab-ico">🧸</span>粉丝</button>
+        <button class="tab" data-tab="me"><span class="tab-ico">⚙️</span>我的</button>
+      </nav>
+    </div>
+
+    <!-- ========== 浮层 ========== -->
+    <div id="sheet-root"></div>
+    <div id="modal-root"></div>
+    <div id="toast-root"></div>
+  </div>
+
+  <script src="js/util.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/simtime.js"></script>
+  <script src="js/fans.js"></script>
+  <script src="js/local-engine.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/growth.js"></script>
+  <script src="js/ui-chat.js"></script>
+  <script src="js/ui-panels.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
